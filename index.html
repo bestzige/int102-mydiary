@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>BestZige Diary</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='icon' href='./assets/images/favicon.png' type='image/x-icon' />
+    <link rel='stylesheet' type='text/css' media='screen' href='./assets/css/main.css?v=1.0.1'>
+    <script src='./assets/js/main.js?v=1.0.1'></script>
+</head>
+
+<body>
+    <div id="preloader">
+        <div id="loader"></div>
+    </div>
+
+    <nav class="navbar"></nav>
+
+    <div class="container">
+        <h1 class="title">Welcome to BestZige's Diary</h1>
+        <div class="row">
+            <div class="col-4 col-md-12">
+                <div class="card">
+                    <h2>Timelines</h2>
+                    <div id="myTimelines"></div>
+                </div>
+            </div>
+            <div class="col-8 col-md-12">
+                <div class="card">
+                    <h2>My Diaries</h2>
+                    <div class="row" id="myDiaries"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+
+<script>
+    let diaries = getDiaries();
+
+    const renderMyDiaries = () => {
+        let diaryList = document.querySelector('#myDiaries');
+
+        let html = '';
+        let relationHtml = '';
+        diaries.forEach((diary) => {
+            let relations = diary.relations;
+            let user = getUser(diary.user_id);
+            let updated = new Date(diary.updated_at);
+            let diaryDate = new Date(diary.diary_date);
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "Asia/Bangkok"
+            };
+
+            relationHtml += `<a href="./user.html?id=${user.id}"><img src="${user.avatar}" alt="${user.name}"></a>`;
+            relations.forEach((relation) => {
+                let user = getUser(relation.user_id);
+                relationHtml += `<a href="./user.html?id=${user.id}"><img src="${user.avatar}" alt="${user.name}"></a>`;
+            });
+
+            html += `
+                <div class="col-12 col-lg-6">
+                    <div class="card diary">
+                        <img class="img-preview" src="${diary.image}" alt="diaryImage">
+                        <span class="diary-date">${diaryDate.toLocaleDateString('en-US', options)}</span>
+
+                        <div class="title">
+                            <span>${diary.title}</span>
+                        </div>
+
+                        <div class="short-description">
+                            <span>${diary.description}</span>
+                        </div>
+
+                        <button button class="btn-readmore" onclick="window.location.href='./diary.html?id=${diary.id}'">Read
+                            More</button>
+
+                        <div class="row">
+                            <div class="col-8 relations">${relationHtml}</div>
+                            <div class="col-4 update-date">
+                                <span>${timeAgo(updated.getTime())}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            diaryList.innerHTML = html;
+
+            relationHtml = '';
+        });
+    }
+
+    const renderMyTimelines = () => {
+        let diaryTimeline = document.querySelector('#myTimelines');
+
+        let html = '';
+        diaries.forEach((diary) => {
+            let user = getUser(diary.user_id);
+            let updated = new Date(diary.updated_at);
+            let diaryDate = new Date(diary.diary_date);
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "Asia/Bangkok"
+            };
+
+            html += `
+            <ul class="timeline">
+                <a href="./diary.html?id=${diary.id}"><li>${diary.title} <span class="timeline-badge">${diaryDate.toLocaleDateString('en-US', options)}</span></li></a>
+            </ul>
+            `;
+            diaryTimeline.innerHTML = html;
+        });
+    }
+
+    const init = () => {
+        preLoader();
+        loadNavbar();
+        renderMyDiaries();
+        renderMyTimelines();
+        loadFooter();
+    };
+
+    init();
+</script>
+
+</html>

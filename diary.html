@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>BestZige Diary</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='icon' href='./assets/images/favicon.png' type='image/x-icon' />
+    <link rel='stylesheet' type='text/css' media='screen' href='./assets/css/main.css?v=1.0.1'>
+    <script src='./assets/js/main.js?v=1.0.1'></script>
+</head>
+
+<body>
+    <nav class="navbar"> </nav>
+
+    <div class="container">
+        <h1 class="title"></h1>
+        <div class="card diary">
+            <div class="row" id="myDiary"> </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+
+<script>
+    const splitId = () => {
+        let url = window.location.href;
+        let id = url.split('/').pop().replace('diary.html?id=', '');
+        return id;
+    }
+
+    const renderMyDiary = () => {
+        let html = '';
+        let relationHtml = '';
+        let emotionHtml = '';
+        let diary = getDiary(splitId());
+        if (Object.keys(diary).length === 0 && diary.constructor === Object) {
+            console.log("The Object is empty")
+        } else {
+            let myDiary = document.getElementById('myDiary');
+            let relations = diary.relations;
+            let emotions = getEmotions();
+            let user = getUser(diary.user_id);
+            let updated = new Date(diary.updated_at);
+            let diaryDate = new Date(diary.diary_date);
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "Asia/Bangkok"
+            };
+
+            let titleClass = document.querySelector('.title');
+            titleClass.textContent = diary.title;
+
+            relationHtml += `
+                    <div class="col-4">
+                        <a href="./user.html?id=${user.id}">
+                            <img src="${user.avatar}" alt="${user.name}">
+                            <p>${user.name}</p>
+                        </a>
+                    </div>
+            `;
+            relations.forEach((relation) => {
+                let user = getUser(relation.user_id);
+                relationHtml += `
+                    <div class="col-4">
+                        <a href="./user.html?id=${user.id}">
+                            <img src="${user.avatar}" alt="${user.name}">
+                            <p>${user.name}</p>
+                        </a>
+                    </div>
+                `;
+            });
+
+            emotions.forEach((emotion) => {
+                if (emotion.id == diary.emotion) {
+                    emotionHtml += `
+                        <div class="column active"><h1>${emotion.emoji}</h1></div>
+                    `;
+                } else {
+                    emotionHtml += `
+                        <div class="column"><h1>${emotion.emoji}</h1></div>
+                    `;
+                }
+            });
+
+            html += `
+                <div class="col-12 col-lg-4">
+                    <div class="card text-center">
+                        <p class="timeline-badge">${diaryDate.toLocaleDateString('en-US', options)}</p>
+
+                        <img class="img-diary" src="${diary.image}" alt="diaryImage">
+                    
+                        <div class="relations-preview">
+                            <h3>User Relations</h3>
+                            <div class="row">${relationHtml}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <div class="card diary">
+                        <span class="diary-date">Last updated: ${timeAgo(updated.getTime())}</span>
+
+                        <div class="full-description">
+                            <span>${diary.description}</span>
+                        </div>
+
+                        <div class="emotion text-center">
+                            <h1>Today Emotion</h1>
+                            <div class="row">${emotionHtml}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="./" class="btn-back">Back to home</a>
+            `;
+
+            myDiary.innerHTML = html;
+        }
+    }
+
+    const init = () => {
+        loadNavbar();
+        renderMyDiary();
+        loadFooter();
+    };
+
+    init();
+</script>
+
+</html>

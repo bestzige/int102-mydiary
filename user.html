@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>BestZige Diary</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='icon' href='./assets/images/favicon.png' type='image/x-icon' />
+    <link rel='stylesheet' type='text/css' media='screen' href='./assets/css/main.css?v=1.0.1'>
+    <script src='./assets/js/main.js?v=1.0.1'></script>
+</head>
+
+<body>
+    <nav class="navbar"> </nav>
+
+    <div class="container">
+        <h1 class="title"></h1>
+        <div class="card">
+            <div id="myUser"></div>
+            <h1 class="title">All Diaries</h1>
+            <div class="row" id="myDiary"></div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</body>
+
+<script>
+    const splitId = () => {
+        let url = window.location.href;
+        let id = url.split('/').pop().replace('user.html?id=', '');
+        return id;
+    }
+
+    const renderMyUser = () => {
+        let html = '';
+        let user = getUser(splitId());
+
+        if (Object.keys(user).length === 0 && user.constructor === Object) {
+            console.log("The Object is empty")
+        } else {
+            let myUser = document.getElementById('myUser');
+
+            let titleClass = document.querySelector('.title');
+            titleClass.textContent = user.name;
+
+            html += `
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <img class="img-user" src="${user.avatar}" alt="${user.name}">
+                        </div>
+                    </div>
+
+                    <a href="./" class="btn-back">Back to home</a>
+                `;
+
+            myUser.innerHTML = html;
+        }
+    }
+
+    const renderMyDiaries = () => {
+        let html = '';
+        let relationHtml = '';
+        let diaries = getDiariesByUser(splitId());
+
+        let myDiary = document.getElementById('myDiary');
+
+        diaries.forEach((diary) => {
+            let relations = diary.relations;
+            let user = getUser(diary.user_id);
+            let updated = new Date(diary.updated_at);
+            let diaryDate = new Date(diary.diary_date);
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "Asia/Bangkok"
+            };
+
+            relationHtml += `<img src="${user.avatar}" alt="${user.name}">`;
+            relations.forEach((relation) => {
+                let user = getUser(relation.user_id);
+                relationHtml += `<img src="${user.avatar}" alt="${user.name}">`;
+            });
+
+            html += `
+                <div class="col-12 col-lg-4">
+                    <div class="card diary">
+                        <img class="img-preview" src="${diary.image}" alt="diaryImage">
+                        <span class="diary-date">${diaryDate.toLocaleDateString('en-US', options)}</span>
+
+                        <div class="title">
+                            <span>${diary.title}</span>
+                        </div>
+
+                        <div class="short-description">
+                            <span>${diary.description}</span>
+                        </div>
+
+                        <button button class="btn-readmore" onclick="window.location.href='./diary.html?id=${diary.id}'">Read
+                            More</button>
+
+                        <div class="row">
+                            <div class="col-8 relations">${relationHtml}</div>
+                            <div class="col-4 update-date">
+                                <span>${timeAgo(updated.getTime())}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            myDiary.innerHTML = html;
+
+            relationHtml = '';
+        });
+    }
+
+    const init = () => {
+        loadNavbar();
+        renderMyUser();
+        renderMyDiaries();
+        loadFooter();
+    };
+
+    init();
+</script>
+
+</html>
