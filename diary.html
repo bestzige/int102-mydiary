@@ -125,8 +125,11 @@
 
     const init = () => {
         loadNavbar();
-        renderMyDiary();
         loadFooter();
+
+        setTimeout(() => {
+            renderMyDiary();
+        }, 10);
     };
 
     init();

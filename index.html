@@ -40,9 +40,8 @@
 </body>
 
 <script>
-    let diaries = getDiaries();
-
     const renderMyDiaries = () => {
+        let diaries = getDiaries();
         let diaryList = document.querySelector('#myDiaries');
 
         let html = '';
@@ -99,6 +98,8 @@
     }
 
     const renderMyTimelines = () => {
+
+        let diaries = getDiaries();
         let diaryTimeline = document.querySelector('#myTimelines');
 
         let html = '';
@@ -107,9 +108,9 @@
             let updated = new Date(diary.updated_at);
             let diaryDate = new Date(diary.diary_date);
             const options = {
-                weekday: "long",
+                weekday: "short",
                 year: "numeric",
-                month: "long",
+                month: "short",
                 day: "numeric",
                 timeZone: "Asia/Bangkok"
             };
@@ -126,9 +127,11 @@
     const init = () => {
         preLoader();
         loadNavbar();
-        renderMyDiaries();
-        renderMyTimelines();
         loadFooter();
+        setTimeout(() => {
+            renderMyDiaries();
+            renderMyTimelines();
+        }, 10);
     };
 
     init();

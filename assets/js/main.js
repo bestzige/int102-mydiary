@@ -3,11 +3,40 @@ const toggleMenu = () => {
     menu.classList.toggle('active');
 };
 
+const fetchData = () => {
+    fetch('./watchara.json?v=' + new Date().getTime())
+        .then(response => response.json())
+        .then(({ diaries, users, emotions }) => {
+            localStorage.setItem('diaries', JSON.stringify(diaries));
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('emotions', JSON.stringify(emotions));
+        })
+        .catch(error => {
+            console.error(error);
+        });
+};
+
+const globalDiaries = JSON.parse(localStorage.getItem('diaries'));
+const globalUsers = JSON.parse(localStorage.getItem('users'));
+const globalEmotions = JSON.parse(localStorage.getItem('emotions'));
+
+const hasData = () => {
+    return (
+        globalDiaries !== null && globalUsers !== null && globalEmotions !== null
+    );
+};
+
+fetchData();
+
+if (!hasData()) {
+    window.location.reload();
+}
+
 const preLoader = () => {
     let preloader = document.querySelector('#preloader');
     let opacity = 1;
     let timer = setInterval(() => {
-        if (opacity <= 0.1) {
+        if (opacity <= 0.5) {
             clearInterval(timer);
             preloader.remove();
         }
@@ -53,31 +82,12 @@ const loadFooter = () => {
     `;
 };
 
-const fetchData = () => {
-    fetch('./watchara.json?v=' + new Date().getTime())
-        .then(response => response.json())
-        .then(({ diaries, users, emotions }) => {
-            localStorage.setItem('diaries', JSON.stringify(diaries));
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('emotions', JSON.stringify(emotions));
-        })
-        .catch(error => {
-            console.error(error);
-        });
-};
-
-fetchData();
-
 const splitPath = () => {
     let url = window.location.href;
     let path = url.split('/').pop();
     path = path.split('.html')[0];
     return path;
 };
-
-const globalDiaries = JSON.parse(localStorage.getItem('diaries'));
-const globalUsers = JSON.parse(localStorage.getItem('users'));
-const globalEmotions = JSON.parse(localStorage.getItem('emotions'));
 
 const getUsers = () => {
     return globalUsers;
