@@ -7,6 +7,18 @@ const fetchData = () => {
     fetch('./watchara.json?v=' + new Date().getTime())
         .then(response => response.json())
         .then(({ diaries, users, emotions }) => {
+            diaries.sort((a, b) => {
+                return new Date(b.diary_date) - new Date(a.diary_date);
+            });
+
+            users.sort((a, b) => {
+                return a.id - b.id;
+            });
+
+            emotions.sort((a, b) => {
+                return a.id - b.id;
+            });
+
             localStorage.setItem('diaries', JSON.stringify(diaries));
             localStorage.setItem('users', JSON.stringify(users));
             localStorage.setItem('emotions', JSON.stringify(emotions));
@@ -93,8 +105,23 @@ const getUsers = () => {
     return globalUsers;
 };
 
-const getDiaries = () => {
-    return globalDiaries;
+const getDiaries = (page, limit) => {
+    if (page === undefined || limit === undefined) {
+        return globalDiaries;
+    }
+
+    let diaries = globalDiaries;
+    let result = [];
+    let start = (page - 1) * limit;
+    let end = start + limit;
+
+    for (let i = start; i < end; i++) {
+        if (diaries[i] !== undefined) {
+            result.push(diaries[i]);
+        }
+    }
+
+    return result;
 };
 
 const getEmotions = () => {

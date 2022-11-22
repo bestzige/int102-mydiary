@@ -29,20 +29,56 @@
             </div>
             <div class="col-8 col-md-12">
                 <div class="card">
-                    <h2>My Diaries</h2>
+                    <h2>My Diaries <span id="page"></span></h2>
                     <div class="row" id="myDiaries"></div>
+                    <div class="row">
+                        <div class="col-5">
+                            <button onclick="prevPage()" class="btn-pagination">Previous Page</button>
+                        </div>
+                        <div class="col-2"></div>
+                        <div class="col-5">
+                            <button onclick="nextPage()" class="btn-pagination">Next
+                                    Page</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer"></div>
+        <div class="footer"></div>
 </body>
 
 <script>
+    let page = 1,
+        limit = 2,
+        totalPage = globalDiaries.length / limit;
+
+    const nextPage = () => {
+        if (page < totalPage) {
+            page++;
+        } else {
+            page = 1;
+        }
+        renderMyDiaries();
+        renderMyTimelines();
+    }
+
+    const prevPage = () => {
+        if (page > 1) {
+            page--;
+        } else {
+            page = totalPage;
+        }
+        renderMyDiaries();
+        renderMyTimelines();
+    }
+
     const renderMyDiaries = () => {
-        let diaries = getDiaries();
+        let diaries = getDiaries(page, limit);
         let diaryList = document.querySelector('#myDiaries');
+
+        let spanPage = document.querySelector('#page');
+        spanPage.textContent = `(Page ${page} of ${totalPage})`;
 
         let html = '';
         let relationHtml = '';
@@ -117,7 +153,18 @@
 
             html += `
             <ul class="timeline">
-                <a href="./diary.html?id=${diary.id}"><li>${diary.title} <span class="timeline-badge">${diaryDate.toLocaleDateString('en-US', options)}</span></li></a>
+                <a href="./diary.html?id=${diary.id}">
+                    <li>
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <span>${diary.title}</span>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <span class="timeline-badge">${diaryDate.toLocaleDateString('en-US', options)}</span>
+                            </div>
+                        </div>
+                    </li>
+                </a>
             </ul>
             `;
             diaryTimeline.innerHTML = html;
