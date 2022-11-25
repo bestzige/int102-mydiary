@@ -3,7 +3,6 @@
 *,
 ::after,
 ::before {
-    /* box-sizing: border-box คือ กำหนดให้ width และ height ของ element นั้น โดย padding และ border ด้วย */
     box-sizing: border-box;
 }
 
@@ -41,7 +40,7 @@ a {
 }
 
 .diary .full-description {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     margin-bottom: 1rem;
     width: 100%;
 }
@@ -169,6 +168,15 @@ a {
 
 .text-center {
     text-align: center !important;
+}
+
+.sumarize-info {
+    color: #fff !important;
+    text-align: center;
+    border: #0099ff 2px solid;
+    padding: 10px;
+    width: 50%;
+    margin: 1rem auto;
 }
 
 .footer {
@@ -313,34 +321,6 @@ a {
 
 .navbar .socials {
     position: relative;
-}
-
-.navbar .dropdown {
-    background-color: #5969ff;
-    padding: 1em 0;
-    position: absolute;
-    display: none;
-    border-radius: 8px;
-    top: 35px;
-    z-index: 999;
-}
-
-.navbar .dropdown li+li {
-    margin-top: 10px;
-}
-
-.navbar .dropdown li {
-    padding: 0.5em 1em;
-    width: 8em;
-    text-align: center;
-}
-
-.navbar .dropdown li:hover {
-    background-color: #8490ff;
-}
-
-.navbar .socials:hover .dropdown {
-    display: block;
 }
 
 .navbar .hamburger {
@@ -653,19 +633,12 @@ a {
     .navbar .hamburger {
         display: block;
     }
-    .navbar .dropdown {
-        background-color: #5969ff;
-        color: #000;
-        left: 50%;
-        top: 30px;
-        transform: translateX(35%);
-    }
-    .navbar .dropdown li:hover {
-        background-color: #8490ff;
-    }
 }
 
 @media (min-width:992px) {
+    .diary .full-description {
+        font-size: 1.3rem;
+    }
     .diary .relations-preview img {
         width: 5rem;
         height: 5rem;
